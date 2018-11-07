@@ -1,0 +1,23 @@
+{
+  "name": "savvywombat/laravel-test-utils",
+  "description": "Utilities and helpers for testing Laravel based applications",
+  "type": "library",
+  "homepage": "https://github.com/SavvyWombat/laravel-test-utils",
+  "keywords": ["test", "savvywombat", "savvy wombat", "laravel", "utilities", "utils", "helpers"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Stuart Jones",
+      "email": "stuart@savvywombat.com.au"
+    }
+  ],
+  "require": {
+    "php": "^7.0",
+    "laravel/framework": "5.7.*"
+  },
+  "autoload": {
+    "files": [
+      "src/functions.php"
+    ]
+  }
+}
