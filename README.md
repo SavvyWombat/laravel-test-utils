@@ -8,18 +8,54 @@ Utilities and helpers for testing Laravel based applications
 
 Inspired by a [Jeffrey Way Laracast](https://laracasts.com/series/lets-build-a-forum-with-laravel/episodes/10).
 
+```php
+namespace Tests\Feature;
+
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+use SavvyWombat\LaravelTestUtils\DatabaseFactories;
+use Tests\TestCase;
+
+class MyTest extends TestCase
+{
+    use DatabaseMigrations;
+    use DatabaseFactories;
+    
+    /** @test */
+    public function it_uses_a_factory_to_create_a_model_and_saves_to_database()
+    {
+        $model = $this->create('App\Model');
+        
+        $this->assertInstanceOf('App\Model', $model);
+        $this->assertDatabaseHas('models', [
+            'field' => $model->field
+        ]);
+    }
+    
+    /** @test */
+    public function it_uses_a_factory_to_create_a_model_without_saving_to_database()
+    {
+        $model = $this->make('App\Model');
+                
+        $this->assertInstanceOf('App\Model', $model);
+        $this->assertDatabaseMissing('models', [
+            'field' => $model->field
+        ]);
+    }
+}
+```
+
 ### create()
 
 Create one or more models using the Laravel database factory.
 
 ```php
-$model = create('App\Model');
+$model = $this->create('App\Model');
 // Creates requested model, inserting the data into the database.
 
-$model = create('App\Model', ['field' => 'value']);
+$model = $this->create('App\Model', ['field' => 'value']);
 // Creates requested model, overriding the factory default for the specific 'fields'.
 
-$collection = create('App\Model', [], 2);
+$collection = $this->create('App\Model', [], 2);
 // Creates multiple models, returning as a Collection
 ```
 
@@ -28,13 +64,13 @@ $collection = create('App\Model', [], 2);
 Make one or more models using the Laravel database factory.
 
 ```php
-$model = create('App\Model');
+$model = $this->make('App\Model');
 // Creates requested model, without inserting the data into the database.
 
-$model = create('App\Model', ['field' => 'value']);
+$model = $this->make('App\Model', ['field' => 'value']);
 // Creates requested model, overriding the factory default for the specific 'fields'.
 
-$collection = create('App\Model', [], 2);
+$collection = $this->make('App\Model', [], 2);
 // Creates multiple models, returning as a Collection
 ```
 
