@@ -74,51 +74,6 @@ $collection = $this->make('App\Model', [], 2);
 // Creates multiple models, returning as a Collection
 ```
 
-## Disable exception handling
-
-Disables the Laravel exception handler to prevent it spewing HTML into the console. Using this trait allows you disable
-the exception handler, causing the actual exception to be returned to the test - or re-enable it, allowing you to test
-HTTP status codes.
-
-It is possible to disable/re-enable on a test by test basis, or you can put the call to disable exception handling in
-your test case's `setUp()` method.
-
-Based on a [gist from Adam Wathan](https://gist.github.com/adamwathan/125847c7e3f16b88fa33a9f8b42333da).
-
-```php
-namespace Tests\Feature;
-
-use SavvyWombat\LaravelTestUtils\DisablesExceptionHandling;
-use Tests\TestCase;
-
-class MyTest extends TestCase
-{
-    use DisablesExceptionHandling;
-    
-    public function setUp()
-    {
-        parent::setUp();
-        
-        $this->disableExceptionHandling();
-    }
-    
-    /** @test */
-    public function it_is_not_testing_response_status()
-    {
-        $this->get('/good-url')
-            ->assertSee('some text');
-    }
-    
-    /** @test */
-    public function it_reenables_exception()
-    {
-        $this->withExceptionHandling()
-            ->get('/bad-url')
-            ->assertStatus(404);
-    }
-}
-```
-
 ## Support
 
 If you are having general issues with this repository, please contact us via
