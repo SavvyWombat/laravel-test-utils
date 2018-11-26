@@ -1,0 +1,27 @@
+<?php
+
+declare(strict_types=1);
+
+namespace SavvyWombat\LaravelTestUtils;
+
+use Illuminate\Support\Facades\DB;
+
+trait DatabaseTesting
+{
+    /**
+     * Generate a raw DB query to cast an array or json string to a JSON field.
+     *
+     * @param array|string $json
+     * @throws \Exception
+     * @return \Illuminate\Database\Query\Expression
+     */
+    public function castToJson($json)
+    {
+        if (is_array($json)) {
+            $json = addslashes(json_encode($json));
+        } elseif (is_null($json) || is_null(json_decode($json))) {
+            throw new \Exception('A valid JSON string was not provided.');
+        }
+        return DB::raw("CAST('{$json}' AS JSON)");
+    }
+}
