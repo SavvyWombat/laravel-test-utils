@@ -74,6 +74,27 @@ $collection = $this->make('App\Model', [], 2);
 // Creates multiple models, returning as a Collection
 ```
 
+## Database testing helpers
+
+### castToJson
+
+Use this helper when asserting against the database (such as with assertDatabaseHas or assertDatabaseMissing) to 
+cast an array or json string to a JSON datatype.
+
+```php
+$this->assertDatabaseHas('vehicles', [
+    'id' => 1,
+    'manufacturer' => 'Toyford',
+    'model' => 'Llama',
+    'attributes' => $this->castToJson([
+        'color' => 'indigo green',
+        'engine' => '2 litres 4-cylinder',
+        'gearbox' => '6-speed manual',
+        'doors' => '5',
+    ]),
+]);
+```
+
 ## Support
 
 If you are having general issues with this repository, please contact us via
