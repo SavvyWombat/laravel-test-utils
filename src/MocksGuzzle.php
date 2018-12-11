@@ -12,7 +12,10 @@ trait MocksGuzzle
 {
     protected $guzzleStack;
 
-    protected function guzzle(): MockHandler
+    /**
+     * @return \GuzzleHttp\Handler\MockHandler
+     */
+    protected function guzzle()
     {
         $this->guzzleStack = new MockHandler();
 
