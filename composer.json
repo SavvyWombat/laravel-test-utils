@@ -14,8 +14,7 @@
   "require": {
     "php": "^7.0",
     "fzaninotto/faker": "^1.4",
-    "guzzlehttp/guzzle": "6.3.*",
-    "laravel/framework": "5.7.*"
+    "guzzlehttp/guzzle": "6.3.*"
   },
   "autoload": {
     "psr-4": {
