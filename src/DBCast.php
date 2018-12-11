@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace SavvyWombat\LaravelTestUtils;
 
-use Illuminate\Support\Facades\DB;
-
-trait DatabaseTesting
+class DBCast
 {
     /**
      * Generate a raw DB query to cast an array or json string to a JSON field.
@@ -15,7 +13,7 @@ trait DatabaseTesting
      * @throws \Exception
      * @return \Illuminate\Database\Query\Expression
      */
-    public function castToJson($json)
+    public static function toJson($json)
     {
         if (is_array($json)) {
             $json = addslashes(json_encode($json));
