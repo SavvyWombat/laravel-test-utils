@@ -17,13 +17,15 @@ trait MocksGuzzle
      */
     protected function guzzle()
     {
-        $this->guzzleStack = new MockHandler();
+        if (is_null($this->guzzleStack)) {
+            $this->guzzleStack = new MockHandler();
 
-        $this->app->bind(Client::class, function($app) {
-            return new Client([
-                'handler' => HandlerStack::create($this->guzzleStack),
-            ]);
-        });
+            $this->app->bind(Client::class, function ($app) {
+                return new Client([
+                    'handler' => HandlerStack::create($this->guzzleStack),
+                ]);
+            });
+        }
 
         return $this->guzzleStack;
     }

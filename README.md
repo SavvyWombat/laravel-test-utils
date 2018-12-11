@@ -103,6 +103,34 @@ $this->assertDatabaseHas('vehicles', [
 
 This trait assumes that you are using Laravel's IoC to inject the Guzzle client into your code.
 
+Say we're testing a contact form with a Google Recaptcha:
+
+```php
+namespace App\Http\Controllers;
+
+use GuzzleHttp\Client;
+use Illuminate\Http\Request;
+
+class ContactController extends Controller
+{
+    public function send(Request $request, Client $client)
+    {
+        // Validate ReCaptcha
+        $response = $this->client->post(config('recaptcha.url'), [
+            'query' => [
+                'secret' => config('recaptcha.secret'),
+                'response' => $request->input(['g-recaptcha-token'], ''),
+            ]
+        ]);
+
+        if (json_decode($response->getBody())->success) {
+            redirect()->route('contact::success');
+        } else {
+            redirect()->route('contact::form')->withErrors(['g-recaptcha-token' => 'Please confirm you are a human!']);
+    }
+}
+```
+
 ```php
 namespace Tests\Feature;
 
@@ -115,24 +143,44 @@ class MyTest extends TestCase
     use MocksGuzzle;
     
     /** @test */
-    public function it_reacts_to_google_recaptcha()
+    public function it_reacts_appropriately_to_recaptcha_success()
     {
-        $this->guzzle() // this is guzzle's MockHandler class, so we can append responses here
-            ->append(new Response(200, [], json_encode(['success' => 'true'])
-            ->append(new Response(200, [], json_encode(['success' => 'false']);
+        $this->guzzle() // this is guzzle's MockHandler class
+            ->append(new Response(200, [], json_encode(['success' => 'true'])));
             
-        $this->post('/some-url', ['g-recaptcha-token' => 'blah'])
+        $this->post('/some-url', ['message' => 'some message', 'g-recaptcha-token' => 'blah'])
             ->assertStatus(302)
             ->assertSessionHasNoErrors()
             ->assertRedirect('/success');
-        
-        $this->post('/some-url', ['g-recaptcha-token' => 'blah'])
+    }
+    
+    /** @test */
+    public function it_errors_on_recaptcha_failure()
+    {   
+        $this->guzzle() // this is guzzle's MockHandler class
+            ->append(new Response(200, [], json_encode(['success' => 'false'])));
+                
+        $this->post('/some-url', ['message' => 'some message', 'g-recaptcha-token' => 'blah'])
             ->assertStatus(302)
             ->assertSessionHasErrors('g-recaptcha-token')
             ->assertRedirect('/some-url');
     }
 }
 ```
+
+If your controller or other code needs to make more than one request to an API, you can chain responses to the guzzle handler:
+
+```php
+$this->guzzle()
+    ->append(new Response(200, [], json_encode(['invoices' => ['id' => '1245', 'id' => '1247']])))
+    ->append(new Response(404));
+```
+
+### Caveats
+
+Currently, the guzzle mock doesn't assert or check anything regarding what requests you are making - 
+it's just a simple way to test your code's reaction to a particular response without having to actually transmit a 
+request to the remote API.
 
 ## Support
 
