@@ -74,9 +74,13 @@ $collection = $this->make('App\Model', [], 2);
 // Creates multiple models, returning as a Collection
 ```
 
-## Database testing helpers
+## Database casting helpers
 
-### castToJson
+```php
+use SavvyWombat\LaravelTestUtils\DBCast
+```
+
+### DBCast::toJson
 
 Use this helper when asserting against the database (such as with assertDatabaseHas or assertDatabaseMissing) to 
 cast an array or json string to a JSON datatype.
@@ -86,13 +90,48 @@ $this->assertDatabaseHas('vehicles', [
     'id' => 1,
     'manufacturer' => 'Toyford',
     'model' => 'Llama',
-    'attributes' => $this->castToJson([
+    'attributes' => DBCast::toJson([
         'color' => 'indigo green',
         'engine' => '2 litres 4-cylinder',
         'gearbox' => '6-speed manual',
         'doors' => '5',
     ]),
 ]);
+```
+
+## Mock guzzle
+
+This trait assumes that you are using Laravel's IoC to inject the Guzzle client into your code.
+
+```php
+namespace Tests\Feature;
+
+use GuzzleHttp\Psr7\Response;
+use SavvyWombat\LaravelTestUtils\MocksGuzzle;
+use Tests\TestCase;
+
+class MyTest extends TestCase
+{
+    use MocksGuzzle;
+    
+    /** @test */
+    public function it_reacts_to_google_recaptcha()
+    {
+        $this->guzzle() // this is guzzle's MockHandler class, so we can append responses here
+            ->append(new Response(200, [], json_encode(['success' => 'true'])
+            ->append(new Response(200, [], json_encode(['success' => 'false']);
+            
+        $this->post('/some-url', ['g-recaptcha-token' => 'blah'])
+            ->assertStatus(302)
+            ->assertSessionHasNoErrors()
+            ->assertRedirect('/success');
+        
+        $this->>post('/some-url', ['g-recaptcha-token' => 'blah'])
+            ->assertStatus(302)
+            ->assertSessionHasErrors('g-recaptcha-token')
+            ->assertRedirect('/some-url');
+    }
+}
 ```
 
 ## Support
