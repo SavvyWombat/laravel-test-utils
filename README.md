@@ -126,7 +126,7 @@ class MyTest extends TestCase
             ->assertSessionHasNoErrors()
             ->assertRedirect('/success');
         
-        $this->>post('/some-url', ['g-recaptcha-token' => 'blah'])
+        $this->post('/some-url', ['g-recaptcha-token' => 'blah'])
             ->assertStatus(302)
             ->assertSessionHasErrors('g-recaptcha-token')
             ->assertRedirect('/some-url');
