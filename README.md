@@ -36,7 +36,7 @@ User this helper to assert Datetime or Carbon instances against timestamps in th
 ```php
 $trip = Trip::factory()->create();
 
-Carbon::setTestNow(Carbon::now());
+Carbon::setTestNow("2020-10-20 10:15:43");
 
 $response = $this->get('/start-trip');
 
