@@ -22,4 +22,15 @@ class DBCast
         }
         return \DB::raw("CAST('{$json}' AS JSON)");
     }
+
+    /**
+     * Casts a DateTime (or compatible object) into a timestamp.
+     *
+     * @param \DateTime
+     * @return string
+     */
+    public static function toTimestamp($dateTime)
+    {
+        return $dateTime->format("Y-m-d H:i:s");
+    }
 }

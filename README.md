@@ -29,6 +29,28 @@ $this->assertDatabaseHas('vehicles', [
 ]);
 ```
 
+### DBCast::toTimestamp
+
+User this helper to assert Datetime or Carbon instances against timestamps in the database.
+
+```php
+$trip = Trip::factory()->create();
+
+Carbon::setTestNow(Carbon::now());
+
+$response = $this->get('/start-trip');
+
+$response->assertStatus(200)
+    ->assertSee('Trip started');
+
+$this->assertDatabaseHas('trips', [
+    'id' => $trip->id,
+    'trip_started_at' => DBCast::toTimestamp(Carbon::now()),
+]);
+
+Carbon::setTestNow();
+```
+
 ## Mock guzzle
 
 This trait assumes that you are using Laravel's IoC to inject the Guzzle client into your code.
